@@ -1,4 +1,4 @@
-package com.ricotronics.noaddict
+package com.ricotronics.noaddict.ui.streak
 
 sealed class StreakAction {
     data object Reset: StreakAction()
