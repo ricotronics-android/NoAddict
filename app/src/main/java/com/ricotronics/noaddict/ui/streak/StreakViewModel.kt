@@ -39,6 +39,14 @@ class StreakViewModel @Inject constructor(
             StreakEvent.ResetStreak -> {
                 resetStreak()
             }
+            StreakEvent.DeleteAllStreaks -> {
+                viewModelScope.launch {
+                    repository.deleteAllStreaks()
+                }
+            }
+            is StreakEvent.StartStreakCounter -> {
+                startTimer(event.start)
+            }
         }
     }
 
@@ -47,8 +55,6 @@ class StreakViewModel @Inject constructor(
     val timer = _timer.asStateFlow()
 
     private var timerJob: Job? = null
-
-    // TODO start timer on app start
 
     fun startTimer(start: Long) {
         timerJob?.cancel()

@@ -7,5 +7,7 @@ interface StreakRepository {
 
     suspend fun addStreakDate(data: StreakData)
 
+    suspend fun deleteAllStreaks()
+
     fun getAllStreakDates(): Flow<List<StreakData>>
 }

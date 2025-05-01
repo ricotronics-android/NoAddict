@@ -6,8 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -37,6 +39,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -73,11 +76,27 @@ fun StreakScreen(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(30.dp))
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                text = "NoAddict",
+                fontSize = 50.sp,
+                color = DeepBlue,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(30.dp))
             Timer()
             Text(
-                text = "Start: " + if (!state.isEmpty()) Instant.ofEpochMilli(
-                    state.get(state.lastIndex).startDate).atZone(ZoneId.systemDefault()
-                ).toLocalDate() else "No Streak started",
+                text = "Start: " + if (!state.isEmpty()) Instant
+                    .ofEpochMilli(state.get(state.lastIndex).startDate)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")).toString()
+                        + " " +
+                        Instant
+                            .ofEpochMilli(state.get(state.lastIndex).startDate)
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:SS")).toString() else "No Streak started",
                 modifier = Modifier
                     .padding(vertical = 32.dp),
                 fontWeight = FontWeight.Medium,

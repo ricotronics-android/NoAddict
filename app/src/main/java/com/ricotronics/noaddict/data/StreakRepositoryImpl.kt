@@ -13,6 +13,10 @@ class StreakRepositoryImpl(
         dao.addStreakDate(data)
     }
 
+    override suspend fun deleteAllStreaks() {
+        dao.deleteAllStreaks()
+    }
+
     override fun getAllStreakDates(): Flow<List<StreakData>> {
         return dao.getAllStreakDates()
     }
