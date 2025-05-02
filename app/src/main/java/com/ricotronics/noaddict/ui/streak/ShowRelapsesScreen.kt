@@ -3,6 +3,7 @@ package com.ricotronics.noaddict.ui.streak
 import android.annotation.SuppressLint
 import android.widget.Space
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -48,9 +50,12 @@ fun ShowRelapsesScreen(
     }
     // TODO Fix this
     Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         floatingActionButton = {
             FloatingActionButton(onClick = {viewModel.streakEvent(StreakEvent.DeleteAllStreaks)}) {
-                Icon(imageVector = Icons.Default.Clear, contentDescription = "Delete all Streaks")
+                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete all Streaks")
             }
         }
     ) {
@@ -59,7 +64,7 @@ fun ShowRelapsesScreen(
                 .fillMaxWidth(),
         ) {
             item {
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(40.dp))
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -83,8 +88,9 @@ fun ShowRelapsesScreen(
                             Instant
                                 .ofEpochMilli(it.startDate)
                                 .atZone(ZoneId.systemDefault())
-                                .toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:SS")).toString(),
-                    textAlign = TextAlign.Center
+                                .toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp
                 )
             }
         }

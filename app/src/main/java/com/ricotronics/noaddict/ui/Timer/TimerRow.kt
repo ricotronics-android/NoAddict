@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ricotronics.noaddict.ui.theme.DeepBlue
@@ -16,7 +17,8 @@ import java.util.Locale
 fun TimerRow(
     modifier: Modifier = Modifier,
     timerValue: Long = 0,
-    timerUnit: String = ""
+    timerUnit: String = "",
+    color: Color = DeepBlue
 ) {
     Row (
         horizontalArrangement = Arrangement.spacedBy(1.dp),
@@ -28,7 +30,7 @@ fun TimerRow(
             lineHeight = 42.sp,
             text = String.format(Locale.GERMAN, "%02d", timerValue),
             fontSize = 40.sp,
-            color = DeepBlue
+            color = color
         )
         Text(
             modifier = Modifier

@@ -76,7 +76,7 @@ fun StreakScreen(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -87,6 +87,7 @@ fun StreakScreen(
             )
             Spacer(modifier = Modifier.height(30.dp))
             Timer()
+            Spacer(modifier = Modifier.height(30.dp))
             Text(
                 text = "Start: " + if (!state.isEmpty()) Instant
                     .ofEpochMilli(state.get(state.lastIndex).startDate)
@@ -96,21 +97,19 @@ fun StreakScreen(
                         Instant
                             .ofEpochMilli(state.get(state.lastIndex).startDate)
                             .atZone(ZoneId.systemDefault())
-                            .toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:SS")).toString() else "No Streak started",
-                modifier = Modifier
-                    .padding(vertical = 32.dp),
+                            .toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString() else "No Streak started",
                 fontWeight = FontWeight.Medium,
                 maxLines = 2,
                 fontSize = 20.sp
             )
             Text(
-                text = "Good days since first streak:\n" + calculateGoodDays(state),
+                text = "Good days since first streak: " + calculateGoodDays(state),
                 modifier = Modifier
                     .padding(vertical = 32.dp),
                 fontWeight = FontWeight.Medium,
                 maxLines = 2,
                 textAlign = TextAlign.Center,
-                fontSize = 25.sp
+                fontSize = 20.sp
             )
             Box(
                 contentAlignment = Alignment.Center,
@@ -133,13 +132,13 @@ fun StreakScreen(
 }
 
 fun calculateGoodDays(state: List<StreakData>): String {
-    if(state.size == 0) {
-        return (0).toString()
+    return if(state.isEmpty()) {
+        (0).toString()
     } else {
-        return Math.max(0, Duration.between(
+        Math.max(0, Duration.between(
             Instant.ofEpochMilli(
                 state.get(state.lastIndex).startDate).atZone(ZoneId.systemDefault()
-                ).toLocalDate().atStartOfDay(),
+            ).toLocalDate().atStartOfDay(),
             LocalDate.now().atStartOfDay()).toDays() - state.size).toString()
     }
 }
