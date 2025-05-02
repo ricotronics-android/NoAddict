@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -22,9 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ricotronics.noaddict.data.StreakData
+import com.ricotronics.noaddict.ui.AlertDialogWrapper
 import com.ricotronics.noaddict.ui.Timer.Timer
 import com.ricotronics.noaddict.ui.theme.DeepBlue
 import com.ricotronics.noaddict.utils.UiEvent
@@ -49,6 +54,7 @@ fun StreakScreen(
     viewModel: StreakViewModel = hiltViewModel(),
     ) {
     val state by viewModel.streakList.collectAsState(emptyList())
+    val openAlertDialog = remember { mutableStateOf(false) }
     LaunchedEffect(key1=true) {
         viewModel.uiEvent.collect {
             event -> when (event) {
@@ -57,6 +63,21 @@ fun StreakScreen(
         }
         }
     }
+
+    when {
+        openAlertDialog.value -> {
+            AlertDialogWrapper(
+                onDismissRequest = { openAlertDialog.value = false },
+                onConfirmation = {
+                    viewModel.streakEvent(StreakEvent.ResetStreak)
+                },
+                dialogTitle = "Warning",
+                dialogText = "Do you really want to reset your streak?",
+                icon = Icons.Default.Info
+            )
+        }
+    }
+
     Scaffold (
         modifier = Modifier
             .fillMaxSize()
@@ -117,7 +138,9 @@ fun StreakScreen(
                     .clip(CircleShape)
                     .background(DeepBlue)
                     .padding(10.dp)
-                    .clickable { viewModel.streakEvent(StreakEvent.ResetStreak) }
+                    .clickable {
+                        openAlertDialog.value = true
+                    }
             ) {
                 Text(
                     text = if (state.isEmpty()) "Start Streak" else "Reset Streak",
