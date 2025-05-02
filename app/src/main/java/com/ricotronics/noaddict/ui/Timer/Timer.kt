@@ -38,8 +38,7 @@ fun Timer(
     Column(
         modifier = Modifier
             .shadow(10.dp, shape = RoundedCornerShape(20.dp), spotColor = Color.Black, ambientColor = Color.Gray)
-            .background(LightGray, shape = RoundedCornerShape(20.dp))
-            .border(1.dp, Color.Black, shape = RoundedCornerShape(20.dp)),
+            .background(LightGray, shape = RoundedCornerShape(20.dp)),
         verticalArrangement = Arrangement.spacedBy(1.dp),
         horizontalAlignment = Alignment.Start,
     ) {
