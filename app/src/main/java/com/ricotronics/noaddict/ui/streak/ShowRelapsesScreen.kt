@@ -66,6 +66,8 @@ fun ShowRelapsesScreen(
                 onDismissRequest = { openAlertDialog.value = false },
                 onConfirmation = {
                     viewModel.streakEvent(StreakEvent.DeleteAllStreaks)
+                    viewModel.streakEvent(StreakEvent.StopStreakCounter)
+                    openAlertDialog.value = false
                 },
                 dialogTitle = "Warning",
                 dialogText = "Do you really want to delete the whole streak history? This option cannot be undone!",

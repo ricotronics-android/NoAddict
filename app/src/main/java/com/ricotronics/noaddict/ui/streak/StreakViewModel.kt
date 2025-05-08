@@ -1,8 +1,5 @@
 package com.ricotronics.noaddict.ui.streak
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ricotronics.noaddict.data.StreakData
@@ -15,11 +12,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,6 +41,9 @@ class StreakViewModel @Inject constructor(
             is StreakEvent.StartStreakCounter -> {
                 startTimer(event.start)
             }
+            is StreakEvent.StopStreakCounter -> {
+                cancelTimer()
+            }
         }
     }
 
@@ -56,7 +53,7 @@ class StreakViewModel @Inject constructor(
 
     private var timerJob: Job? = null
 
-    fun startTimer(start: Long) {
+    private fun startTimer(start: Long) {
         timerJob?.cancel()
         _timer.value = start
         timerJob = viewModelScope.launch {
@@ -65,6 +62,11 @@ class StreakViewModel @Inject constructor(
                 _timer.value++
             }
         }
+    }
+
+    private fun cancelTimer() {
+        timerJob?.cancel()
+        _timer.value = 0
     }
 
     override fun onCleared() {

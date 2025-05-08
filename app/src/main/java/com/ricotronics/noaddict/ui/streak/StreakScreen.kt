@@ -70,6 +70,7 @@ fun StreakScreen(
                 onDismissRequest = { openAlertDialog.value = false },
                 onConfirmation = {
                     viewModel.streakEvent(StreakEvent.ResetStreak)
+                    openAlertDialog.value = false
                 },
                 dialogTitle = "Warning",
                 dialogText = "Do you really want to reset your streak?",
@@ -139,7 +140,10 @@ fun StreakScreen(
                     .background(DeepBlue)
                     .padding(10.dp)
                     .clickable {
-                        openAlertDialog.value = true
+                        if(state.isEmpty())
+                            viewModel.streakEvent(StreakEvent.ResetStreak)
+                        else
+                            openAlertDialog.value = true
                     }
             ) {
                 Text(
@@ -155,13 +159,30 @@ fun StreakScreen(
 }
 
 fun calculateGoodDays(state: List<StreakData>): String {
+    var relapseDays = 0
+    if (state.isEmpty()) return "0"
+
+    var prevDate: LocalDate = Instant.ofEpochMilli(
+        state.get(0).startDate).atZone(ZoneId.systemDefault()
+    ).toLocalDate()
+
+    for(i in 0..state.size - 1) {
+        val currentDate = Instant.ofEpochMilli(
+            state.get(i).startDate).atZone(ZoneId.systemDefault()
+        ).toLocalDate()
+        if (currentDate.month == prevDate.month && currentDate.dayOfMonth == prevDate.dayOfMonth) {
+            continue
+        }
+        relapseDays += 1
+        prevDate = currentDate
+    }
     return if(state.isEmpty()) {
         (0).toString()
     } else {
         Math.max(0, Duration.between(
             Instant.ofEpochMilli(
-                state.get(state.lastIndex).startDate).atZone(ZoneId.systemDefault()
+                state.get(0).startDate).atZone(ZoneId.systemDefault()
             ).toLocalDate().atStartOfDay(),
-            LocalDate.now().atStartOfDay()).toDays() - state.size).toString()
+            LocalDate.now().atStartOfDay()).toDays() - relapseDays).toString()
     }
 }

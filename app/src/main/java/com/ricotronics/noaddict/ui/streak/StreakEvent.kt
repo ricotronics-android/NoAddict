@@ -5,4 +5,5 @@ sealed class StreakEvent {
     data object OnShowRelapsesClick: StreakEvent()
     data object DeleteAllStreaks: StreakEvent()
     data class StartStreakCounter(val start: Long): StreakEvent()
+    data object StopStreakCounter: StreakEvent()
 }
