@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ricotronics.noaddict.ui.streak.SettingsScreen
 import com.ricotronics.noaddict.ui.streak.ShowRelapsesScreen
 import com.ricotronics.noaddict.ui.streak.StreakScreen
 import com.ricotronics.noaddict.ui.theme.NoAddictTheme
@@ -31,6 +32,16 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(Routes.RELAPSE_VIEW) {
                         ShowRelapsesScreen(
+                            onPopBackstack = {
+                                navController.popBackStack()
+                            },
+                            onNavigate = {
+                                navController.navigate(it.route)
+                            }
+                        )
+                    }
+                    composable(Routes.SETTINGS_VIEW) {
+                        SettingsScreen(
                             onPopBackstack = {
                                 navController.popBackStack()
                             }

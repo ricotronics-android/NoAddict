@@ -86,7 +86,7 @@ fun StreakScreen(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 viewModel.streakEvent(StreakEvent.OnShowRelapsesClick)
-            }) {
+            }, containerColor = DeepBlue, contentColor = Color.White) {
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = "show relapses")
             }
         }
@@ -166,7 +166,7 @@ fun calculateGoodDays(state: List<StreakData>): String {
         state.get(0).startDate).atZone(ZoneId.systemDefault()
     ).toLocalDate()
 
-    for(i in 0..state.size - 1) {
+    for(i in state.indices) {
         val currentDate = Instant.ofEpochMilli(
             state.get(i).startDate).atZone(ZoneId.systemDefault()
         ).toLocalDate()

@@ -30,8 +30,10 @@ fun Timer(
     val timerValue by viewModel.timer.collectAsState()
     val streakDates by viewModel.streakList.collectAsState(emptyList())
     if(streakDates.isNotEmpty()) {
-        val timeDiff: Long = (System.currentTimeMillis() - streakDates.get(streakDates.lastIndex).startDate) / 1000
+        val timeDiff: Long = (System.currentTimeMillis() - streakDates[streakDates.lastIndex].startDate) / 1000
         viewModel.streakEvent(StreakEvent.StartStreakCounter(timeDiff))
+    } else {
+        viewModel.streakEvent(StreakEvent.StopStreakCounter)
     }
     Column(
         modifier = Modifier

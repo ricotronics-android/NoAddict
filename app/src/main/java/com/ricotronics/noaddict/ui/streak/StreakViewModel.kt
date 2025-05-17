@@ -1,5 +1,9 @@
 package com.ricotronics.noaddict.ui.streak
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ricotronics.noaddict.data.StreakData
@@ -8,8 +12,12 @@ import com.ricotronics.noaddict.utils.Routes
 import com.ricotronics.noaddict.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -29,6 +37,9 @@ class StreakViewModel @Inject constructor(
         when (event) {
             StreakEvent.OnShowRelapsesClick -> {
                 sendUiEvent(UiEvent.Navigate(Routes.RELAPSE_VIEW))
+            }
+            is StreakEvent.OnShowSettingsClick -> {
+                sendUiEvent(UiEvent.Navigate(Routes.SETTINGS_VIEW)) // TODO: add id for edit
             }
             StreakEvent.ResetStreak -> {
                 resetStreak()
@@ -52,12 +63,16 @@ class StreakViewModel @Inject constructor(
     val timer = _timer.asStateFlow()
 
     private var timerJob: Job? = null
+    private var _running = MutableStateFlow(false)
+    private val running = _running.asStateFlow()
 
     private fun startTimer(start: Long) {
+        _running.value = false
         timerJob?.cancel()
+        _running.value = true
         _timer.value = start
         timerJob = viewModelScope.launch {
-            while (true) {
+            while (running.value) {
                 delay(1000)
                 _timer.value++
             }
@@ -65,20 +80,14 @@ class StreakViewModel @Inject constructor(
     }
 
     private fun cancelTimer() {
-        timerJob?.cancel()
+        _running.value = false
         _timer.value = 0
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        timerJob?.cancel()
     }
 
     private fun resetStreak() {
         viewModelScope.launch {
             repository.addStreakDate(StreakData(System.currentTimeMillis()))
         }
-        startTimer(0)
     }
 
     private fun sendUiEvent(event: UiEvent) {
