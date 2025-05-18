@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
@@ -21,13 +22,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -55,6 +56,7 @@ fun StreakScreen(
     ) {
     val state by viewModel.streakList.collectAsState(emptyList())
     val openAlertDialog = remember { mutableStateOf(false) }
+    val metaData by viewModel.metaData.collectAsState(emptyList())
     LaunchedEffect(key1=true) {
         viewModel.uiEvent.collect {
             event -> when (event) {
@@ -74,7 +76,8 @@ fun StreakScreen(
                 },
                 dialogTitle = "Warning",
                 dialogText = "Do you really want to reset your streak?",
-                icon = Icons.Default.Info
+                icon = Icons.Default.Info,
+                content = {}
             )
         }
     }
@@ -102,7 +105,7 @@ fun StreakScreen(
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
-                text = "NoAddict",
+                text = "No${if (metaData.isEmpty()) "" else metaData[0].addictionName}",
                 fontSize = 50.sp,
                 color = DeepBlue,
                 textAlign = TextAlign.Center
@@ -136,8 +139,8 @@ fun StreakScreen(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .clip(CircleShape)
-                    .background(DeepBlue)
+                    .shadow(5.dp, shape = RoundedCornerShape(20.dp), spotColor = Color.Black, ambientColor = Color.Gray)
+                    .background(DeepBlue, shape = RoundedCornerShape(20.dp))
                     .padding(10.dp)
                     .clickable {
                         if(state.isEmpty())

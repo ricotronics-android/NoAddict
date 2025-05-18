@@ -1,11 +1,15 @@
 package com.ricotronics.noaddict.ui.streak
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ricotronics.noaddict.data.MetaData
+import com.ricotronics.noaddict.data.MetaRepository
 import com.ricotronics.noaddict.data.StreakData
 import com.ricotronics.noaddict.data.StreakRepository
 import com.ricotronics.noaddict.utils.Routes
@@ -21,14 +25,28 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class StreakViewModel @Inject constructor(
-    private val repository: StreakRepository
+    private val repository: StreakRepository,
+    private val metaRepository: MetaRepository
 ): ViewModel() {
     val streakList = repository.getAllStreakDates()
+
+    // meta data
+    val metaData = metaRepository.getMetaData()
+
+    init {
+        viewModelScope.launch {
+            val md = metaRepository.getMetaData()
+            if(md.toList().isEmpty())  {
+                metaRepository.addMetaData(MetaData(0, "Addict"))
+            }
+        }
+    }
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -54,6 +72,12 @@ class StreakViewModel @Inject constructor(
             }
             is StreakEvent.StopStreakCounter -> {
                 cancelTimer()
+            }
+            is StreakEvent.ChangeAddictionName -> {
+                println(event.addictionName)
+                viewModelScope.launch {
+                    metaRepository.addMetaData(MetaData(0, event.addictionName))
+                }
             }
         }
     }

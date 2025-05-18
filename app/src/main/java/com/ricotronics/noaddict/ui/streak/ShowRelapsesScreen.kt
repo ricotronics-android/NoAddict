@@ -51,6 +51,7 @@ fun ShowRelapsesScreen(
     viewModel: StreakViewModel = hiltViewModel()
 ) {
     val state by viewModel.streakList.collectAsState(emptyList())
+    val metaData by viewModel.metaData.collectAsState(emptyList())
     LaunchedEffect(key1=true) {
         viewModel.uiEvent.collect {
             event -> when (event) {
@@ -83,7 +84,7 @@ fun ShowRelapsesScreen(
                 Text(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    text = "NoAddict",
+                    text = "No${if (metaData.isEmpty()) "" else metaData[0].addictionName}",
                     fontSize = 50.sp,
                     color = DeepBlue,
                     textAlign = TextAlign.Center

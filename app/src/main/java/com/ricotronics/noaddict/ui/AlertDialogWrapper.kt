@@ -11,8 +11,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 fun AlertDialogWrapper(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
+    content: @Composable () -> Unit,
     dialogTitle: String,
-    dialogText: String,
+    dialogText: String? = null,
     icon: ImageVector,
 ) {
     AlertDialog(
@@ -23,7 +24,10 @@ fun AlertDialogWrapper(
             Text(text = dialogTitle)
         },
         text = {
-            Text(text = dialogText)
+            content.invoke()
+            if(dialogText != null) {
+                Text(text = dialogText)
+            }
         },
         onDismissRequest = {
             onDismissRequest()

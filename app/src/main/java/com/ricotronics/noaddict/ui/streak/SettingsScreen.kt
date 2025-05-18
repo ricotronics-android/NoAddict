@@ -1,27 +1,27 @@
 package com.ricotronics.noaddict.ui.streak
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,7 +36,11 @@ fun SettingsScreen(
     onPopBackstack: () -> Unit,
     viewModel: StreakViewModel = hiltViewModel()
 ) {
-    val openAlertDialog = remember { mutableStateOf(false) }
+    val openResetAppDialog = remember { mutableStateOf(false) }
+    val openEditAddictionNameDialog = remember { mutableStateOf(false) }
+    val addictionName = remember { mutableStateOf("") }
+    val metaData by viewModel.metaData.collectAsState(emptyList())
+    addictionName.value = if (metaData.isEmpty()) "" else metaData[0].addictionName
     LaunchedEffect(key1=true) {
         viewModel.uiEvent.collect {
                 event -> when (event) {
@@ -48,17 +52,30 @@ fun SettingsScreen(
         }
     }
     when {
-        openAlertDialog.value -> {
+        openResetAppDialog.value -> {
             AlertDialogWrapper(
-                onDismissRequest = { openAlertDialog.value = false },
+                onDismissRequest = { openResetAppDialog.value = false },
                 onConfirmation = {
                     viewModel.streakEvent(StreakEvent.DeleteAllStreaks)
                     viewModel.streakEvent(StreakEvent.StopStreakCounter)
-                    openAlertDialog.value = false
+                    openResetAppDialog.value = false
                 },
                 dialogTitle = "Warning",
                 dialogText = "Do you really want to delete the whole streak history? This option cannot be undone!",
-                icon = Icons.Default.Info
+                icon = Icons.Default.Info,
+                content = {}
+            )
+        }
+        openEditAddictionNameDialog.value -> {
+            AlertDialogWrapper(
+                dialogTitle = "Edit Addiction Name",
+                content = {OutlinedTextField(addictionName.value, { addictionName.value = it }, label = {Text("Addiction Name")})},
+                onDismissRequest = { openEditAddictionNameDialog.value = false },
+                onConfirmation = {
+                    viewModel.streakEvent(StreakEvent.ChangeAddictionName(addictionName.value))
+                    openEditAddictionNameDialog.value = false
+                },
+                icon = Icons.Default.Edit
             )
         }
     }
@@ -76,53 +93,23 @@ fun SettingsScreen(
             fontSize = 35.sp
         )
         Spacer(modifier = Modifier.height(30.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .drawBehind {
-                    drawLine(
-                        color = Color.LightGray,
-                        start = Offset(0f, size.height),
-                        end = Offset(size.width, size.height),
-                        strokeWidth = 4F,
-                    )}
-                .clickable {
-                    // TODO
-                }
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                color = Color.Black,
-                fontSize = 22.sp,
-                text = "Edit last Streak Start",
-            )
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp)
-                .drawBehind {
-                    drawLine(
-                        color = Color.LightGray,
-                        start = Offset(0f, size.height),
-                        end = Offset(size.width, size.height),
-                        strokeWidth = 4F,
-                    )}
-                .clickable {
-                    openAlertDialog.value = true
-                }
-        ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                color = Color.Red,
-                fontSize = 22.sp,
-                text = "Reset App!",
-            )
-        }
+        SettingsOption(
+            modifier = modifier,
+            function = {},
+            text = "Edit last streak start",
+            textColor = Color.Black
+        )
+        SettingsOption(
+            modifier = modifier,
+            function = { openEditAddictionNameDialog.value = true},
+            text = "Edit Addiction Name",
+            textColor = Color.Black
+        )
+        SettingsOption(
+            modifier = modifier,
+            function = { openResetAppDialog.value = true },
+            text = "Reset App!",
+            textColor = Color.Red
+        )
     }
 }
