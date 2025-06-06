@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ricotronics.noaddict.ui.streak.StreakEvent
 import com.ricotronics.noaddict.ui.streak.StreakViewModel
-import com.ricotronics.noaddict.ui.theme.LightGray
+import com.ricotronics.noaddict.ui.theme.DarkBlue
 import com.ricotronics.noaddict.ui.theme.Orange
 import com.ricotronics.noaddict.utils.getDays
 import com.ricotronics.noaddict.utils.getHours
@@ -38,7 +38,7 @@ fun Timer(
     Column(
         modifier = Modifier
             .shadow(10.dp, shape = RoundedCornerShape(20.dp), spotColor = Color.Black, ambientColor = Color.Gray)
-            .background(LightGray, shape = RoundedCornerShape(20.dp)),
+            .background(DarkBlue, shape = RoundedCornerShape(20.dp)),
         verticalArrangement = Arrangement.spacedBy(1.dp),
         horizontalAlignment = Alignment.Start,
     ) {

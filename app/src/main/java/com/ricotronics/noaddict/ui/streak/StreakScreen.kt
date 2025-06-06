@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -22,24 +21,29 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ricotronics.noaddict.R
 import com.ricotronics.noaddict.data.StreakData
 import com.ricotronics.noaddict.ui.AlertDialogWrapper
 import com.ricotronics.noaddict.ui.Timer.Timer
+import com.ricotronics.noaddict.ui.theme.DarkBlue
 import com.ricotronics.noaddict.ui.theme.DeepBlue
+import com.ricotronics.noaddict.ui.theme.Orange
 import com.ricotronics.noaddict.utils.UiEvent
 import java.time.Duration
 import java.time.Instant
@@ -85,6 +89,10 @@ fun StreakScreen(
     Scaffold (
         modifier = Modifier
             .fillMaxSize()
+            .paint(
+                painterResource(R.drawable.background),
+                contentScale = ContentScale.FillHeight
+            )
             .padding(16.dp),
         floatingActionButton = {
             FloatingActionButton(onClick = {
@@ -92,7 +100,8 @@ fun StreakScreen(
             }, containerColor = DeepBlue, contentColor = Color.White) {
                 Icon(imageVector = Icons.Default.DateRange, contentDescription = "show relapses")
             }
-        }
+        },
+        containerColor = Color.Transparent
     ) {
         Column(
             modifier = Modifier
@@ -107,7 +116,8 @@ fun StreakScreen(
                     .fillMaxWidth(),
                 text = "No${if (metaData.isEmpty()) "" else metaData[0].addictionName}",
                 fontSize = 50.sp,
-                color = DeepBlue,
+                color = DarkBlue,
+                fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(30.dp))
@@ -125,7 +135,8 @@ fun StreakScreen(
                             .toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString() else "No Streak started",
                 fontWeight = FontWeight.Medium,
                 maxLines = 2,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = Color.White
             )
             Text(
                 text = "Good days since first streak: " + calculateGoodDays(state),
@@ -134,7 +145,8 @@ fun StreakScreen(
                 fontWeight = FontWeight.Medium,
                 maxLines = 2,
                 textAlign = TextAlign.Center,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = Color.White
             )
             Box(
                 contentAlignment = Alignment.Center,

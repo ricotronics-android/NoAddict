@@ -29,6 +29,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ricotronics.noaddict.ui.AlertDialogWrapper
 import com.ricotronics.noaddict.utils.UiEvent
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun SettingsScreen(
@@ -38,9 +42,41 @@ fun SettingsScreen(
 ) {
     val openResetAppDialog = remember { mutableStateOf(false) }
     val openEditAddictionNameDialog = remember { mutableStateOf(false) }
+    val openEditStreakStartDialog = remember { mutableStateOf(false) }
     val addictionName = remember { mutableStateOf("") }
+
+    // states for streak start edit
+    val year = remember { mutableStateOf("") }
+    val month = remember { mutableStateOf("") }
+    val day = remember { mutableStateOf("") }
+    val hour = remember { mutableStateOf("") }
+    val minute = remember { mutableStateOf("") }
+    val second = remember { mutableStateOf("") }
+    val streakId = remember { mutableStateOf(-1) }
+
     val metaData by viewModel.metaData.collectAsState(emptyList())
+    val state by viewModel.streakList.collectAsState(emptyList())
+
+    // set current addiction name to edit field if not empty
     addictionName.value = if (metaData.isEmpty()) "" else metaData[0].addictionName
+
+    // set last streak date to streak start edit state
+    if(!state.isEmpty()) {
+        val lastStreakStart = Instant
+        .ofEpochMilli(state.get(state.lastIndex).startDate)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDateTime()
+
+        year.value = lastStreakStart.year.toString()
+        month.value = lastStreakStart.month.value.toString()
+        day.value = lastStreakStart.dayOfMonth.toString()
+        hour.value = lastStreakStart.hour.toString()
+        minute.value = lastStreakStart.minute.toString()
+        second.value = lastStreakStart.second.toString()
+        streakId.value = state.get(state.lastIndex).id!!
+    }
+
+
     LaunchedEffect(key1=true) {
         viewModel.uiEvent.collect {
                 event -> when (event) {
@@ -78,6 +114,37 @@ fun SettingsScreen(
                 icon = Icons.Default.Edit
             )
         }
+        openEditStreakStartDialog.value -> {
+            AlertDialogWrapper(
+                dialogTitle = "Edit last streak start",
+                content = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(year.value, { year.value = it }, label = {Text("Year")})
+                        OutlinedTextField(month.value, { month.value = it }, label = {Text("Month")})
+                        OutlinedTextField(day.value, { day.value = it }, label = {Text("Day")})
+                        OutlinedTextField(hour.value, { hour.value = it }, label = {Text("Hour")})
+                        OutlinedTextField(minute.value, { minute.value = it }, label = {Text("Minute")})
+                        OutlinedTextField(second.value, { second.value = it }, label = {Text("Second")})
+                    }
+                          },
+                onDismissRequest = { openEditStreakStartDialog.value = false },
+                onConfirmation = {
+
+                    val date = LocalDateTime.of(
+                        year.value.toInt(),
+                        month.value.toInt(),
+                        day.value.toInt(),
+                        hour.value.toInt(),
+                        minute.value.toInt(),
+                        second.value.toInt())
+                    viewModel.streakEvent(StreakEvent.ChangeStreakStart(date, streakId.value))
+                    openEditStreakStartDialog.value = false
+                },
+                icon = Icons.Default.Edit
+            )
+        }
     }
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -95,7 +162,7 @@ fun SettingsScreen(
         Spacer(modifier = Modifier.height(30.dp))
         SettingsOption(
             modifier = modifier,
-            function = {},
+            function = { openEditStreakStartDialog.value = true},
             text = "Edit last streak start",
             textColor = Color.Black
         )

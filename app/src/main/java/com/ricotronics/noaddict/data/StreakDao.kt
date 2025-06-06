@@ -12,7 +12,7 @@ interface SteakDao {
     @Query("SELECT id, MAX(startDate) as startDate FROM StreakData GROUP BY id;")
     suspend fun getLatestStreakDate(): StreakData?
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addStreakDate(data: StreakData)
 
     @Query("DELETE FROM StreakData")

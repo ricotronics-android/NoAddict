@@ -37,6 +37,7 @@ fun TimerRow(
                 .padding(10.dp),
             lineHeight = 42.sp,
             text = timerUnit,
+            color = Color.White,
             fontSize = 40.sp)
     }
 }

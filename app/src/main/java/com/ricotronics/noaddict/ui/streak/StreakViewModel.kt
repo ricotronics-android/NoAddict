@@ -27,6 +27,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import java.time.ZoneId
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 @HiltViewModel
@@ -74,9 +76,14 @@ class StreakViewModel @Inject constructor(
                 cancelTimer()
             }
             is StreakEvent.ChangeAddictionName -> {
-                println(event.addictionName)
                 viewModelScope.launch {
                     metaRepository.addMetaData(MetaData(0, event.addictionName))
+                }
+            }
+
+            is StreakEvent.ChangeStreakStart -> {
+                viewModelScope.launch {
+                    repository.addStreakDate(StreakData(event.streakStart.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(), id = event.streakId))
                 }
             }
         }
