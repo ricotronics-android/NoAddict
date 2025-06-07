@@ -43,7 +43,6 @@ import com.ricotronics.noaddict.ui.AlertDialogWrapper
 import com.ricotronics.noaddict.ui.Timer.Timer
 import com.ricotronics.noaddict.ui.theme.DarkBlue
 import com.ricotronics.noaddict.ui.theme.DeepBlue
-import com.ricotronics.noaddict.ui.theme.Orange
 import com.ricotronics.noaddict.utils.UiEvent
 import java.time.Duration
 import java.time.Instant
@@ -105,9 +104,9 @@ fun StreakScreen(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(40.dp))
@@ -152,7 +151,7 @@ fun StreakScreen(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .shadow(5.dp, shape = RoundedCornerShape(20.dp), spotColor = Color.Black, ambientColor = Color.Gray)
-                    .background(DeepBlue, shape = RoundedCornerShape(20.dp))
+                    .background(Color.Red, shape = RoundedCornerShape(20.dp))
                     .padding(10.dp)
                     .clickable {
                         if(state.isEmpty())
@@ -167,6 +166,7 @@ fun StreakScreen(
                     color = Color.White,
                 )
             }
+            Spacer(Modifier.height(70.dp))
         }
 
 

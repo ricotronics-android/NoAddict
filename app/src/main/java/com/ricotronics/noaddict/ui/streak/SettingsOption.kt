@@ -26,7 +26,7 @@ fun SettingsOption(
             .padding(10.dp)
             .drawBehind {
                 drawLine(
-                    color = Color.LightGray,
+                    color = Color.Gray,
                     start = Offset(0f, size.height),
                     end = Offset(size.width, size.height),
                     strokeWidth = 4F,

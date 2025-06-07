@@ -30,13 +30,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.ricotronics.noaddict.R
+import com.ricotronics.noaddict.ui.theme.DarkBlue
 import com.ricotronics.noaddict.ui.theme.DeepBlue
 import com.ricotronics.noaddict.utils.UiEvent
 import java.time.Instant
@@ -67,13 +72,18 @@ fun ShowRelapsesScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
+            .paint(
+                painterResource(R.drawable.background),
+                contentScale = ContentScale.FillHeight
+            )
             .padding(16.dp),
         floatingActionButton = {
             FloatingActionButton(onClick = {viewModel.streakEvent(StreakEvent.OnShowSettingsClick)},
                 containerColor = DeepBlue, contentColor = Color.White) {
                 Icon(imageVector = Icons.Default.Settings, contentDescription = "Open Settings")
             }
-        }
+        },
+        containerColor = Color.Transparent
     ) {
         LazyColumn(
             modifier = Modifier
@@ -84,21 +94,13 @@ fun ShowRelapsesScreen(
                 Spacer(modifier = Modifier.height(40.dp))
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    text = "No${if (metaData.isEmpty()) "" else metaData[0].addictionName}",
-                    fontSize = 50.sp,
-                    color = DeepBlue,
-                    fontWeight = FontWeight.ExtraBold,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(30.dp))
-                Text(
-                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(2.dp),
                     text = "Total Relapses",
                     textAlign = TextAlign.Center,
-                    fontSize = 30.sp
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = DarkBlue
                 )
                 Spacer(modifier = Modifier.height(30.dp))
             }
@@ -109,9 +111,9 @@ fun ShowRelapsesScreen(
                             .padding(10.dp)
                             .drawBehind {
                                 drawLine(
-                                    color = Color.Gray,
-                                    start = Offset(0f, size.height),
-                                    end = Offset(size.width, size.height),
+                                    color = Color.White,
+                                    start = Offset(0f, size.height + 20),
+                                    end = Offset(size.width, size.height + 20),
                                     strokeWidth = 4F,
                                 )},
                         text = "Date: " + Instant
@@ -124,7 +126,8 @@ fun ShowRelapsesScreen(
                                     .atZone(ZoneId.systemDefault())
                                     .toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")).toString(),
                         textAlign = TextAlign.Left,
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        color = Color.White
                     )
             }
         }
